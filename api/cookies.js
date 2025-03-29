@@ -1,20 +1,20 @@
 const { createClient } = require('@supabase/supabase-js');
-require('dotenv').config(); // Add this line to load .env file
+require('dotenv').config();
 
-// Alternative approach that also works with Vercel
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-// For debugging
-console.log('Environment vars loaded:', !!supabaseUrl, !!supabaseKey);
-
+// This is the format Vercel expects for API routes
 module.exports = async (req, res) => {
-  // Set CORS headers for browser requests
+  // Add console.log for debugging
+  console.log('API route /api/cookies called');
+  console.log('Environment variables loaded:', !!supabaseUrl, !!supabaseKey);
+  
+  // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
   
-  // Handle OPTIONS request for CORS preflight
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
@@ -25,12 +25,14 @@ module.exports = async (req, res) => {
       .select('*');
     
     if (error) {
+      console.error('Supabase error:', error);
       throw error;
     }
     
-    res.status(200).json(cookies);
+    console.log('Data retrieved successfully:', !!cookies);
+    return res.status(200).json(cookies);
   } catch (error) {
     console.error('API error:', error);
-    res.status(500).json({ error: 'Server error', details: error.message });
+    return res.status(500).json({ error: 'Server error', details: error.message });
   }
 };
