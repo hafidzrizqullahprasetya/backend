@@ -29,17 +29,32 @@ module.exports = async (req, res) => {
 
     // Perbaiki data cookie sebelum dikirim ke klien
     const fixedCookies = cookies.map((cookie) => {
+      // Pastikan format seragam dengan nama properti yang tepat
+      const fixedCookie = {
+        name: cookie.name,
+        value: cookie.value,
+        domain: cookie.domain,
+        path: cookie.path || "/",
+        secure: Boolean(cookie.secure),
+        httpOnly: Boolean(cookie.http_only || cookie.httpOnly),
+        sameSite: cookie.same_site || cookie.sameSite,
+        expirationDate: cookie.expiration_date || cookie.expirationDate,
+        hostOnly: Boolean(cookie.host_only || cookie.hostOnly),
+        session: Boolean(cookie.session),
+      };
+
       // Pastikan prefixes dipertahankan untuk cookies autentikasi
-      if (cookie.name === "Secure-next-auth.session-token") {
-        cookie.name = "__Secure-next-auth.session-token";
+      if (fixedCookie.name === "Secure-next-auth.session-token") {
+        fixedCookie.name = "__Secure-next-auth.session-token";
       }
-      if (cookie.name === "Host-next-auth.csrf-token") {
-        cookie.name = "__Host-next-auth.csrf-token";
+      if (fixedCookie.name === "Host-next-auth.csrf-token") {
+        fixedCookie.name = "__Host-next-auth.csrf-token";
       }
-      if (cookie.name === "Secure-next-auth.callback-url") {
-        cookie.name = "__Secure-next-auth.callback-url";
+      if (fixedCookie.name === "Secure-next-auth.callback-url") {
+        fixedCookie.name = "__Secure-next-auth.callback-url";
       }
-      return cookie;
+
+      return fixedCookie;
     });
 
     console.log("Data berhasil diperbaiki dan dikirim");
