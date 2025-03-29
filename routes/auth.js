@@ -1,10 +1,17 @@
 const express = require('express');
-const db = require('../config/db');
+const supabase = require('../config/db');
 const router = express.Router();
 
 router.get('/cookies', async (req, res) => {
   try {
-    const [cookies] = await db.query('SELECT * FROM cookies');
+    const { data: cookies, error } = await supabase
+      .from('cookies')
+      .select('*');
+    
+    if (error) {
+      throw error;
+    }
+    
     res.json(cookies);
   } catch (error) {
     res.status(500).json({ error: 'Server error', details: error.message });

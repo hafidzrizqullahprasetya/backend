@@ -1,11 +1,9 @@
-const mysql = require('mysql2/promise');
+require('dotenv').config();
+const { createClient } = require('@supabase/supabase-js');
 
-const db = mysql.createPool({
-  host: 'localhost',
-  port: 8889,         // Sesuaikan dengan port MAMP Anda
-  user: 'root',
-  password: 'root',   // Default MAMP password
-  database: 'patungan'
-});
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_ANON_KEY;
 
-module.exports = db;
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+module.exports = supabase;
